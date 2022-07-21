@@ -26,22 +26,28 @@ import kotlin.collections.ArrayList
  */
 class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
 
+
     var isAlwaysSelected = true
         set(value) {
             field = value
             Engine.isAlwaysSelected = value
         }
 
+    var isVerticalSwipeEnabled = true
+
+
     var backgroundColor: Color? = null
 
     var maxSelectedCount: Int? = null
         set(value) {
             Engine.maxSelectedCount = value
+            field = value
         }
 
     var bubbleSize = 50
         set(value) {
             Engine.radius = value
+            field = value
         }
 
     var listener: BubblePickerListener? = null
@@ -94,14 +100,12 @@ class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
             return
         }
         clear()
-
         Engine.centerImmediately = centerImmediately
-
         Engine.build(pickerList.size, scaleX, scaleY)
                 .forEachIndexed { index, body ->
+
                     circles.add(Item(WeakReference(glView.context), pickerList[index], body, isAlwaysSelected))
                 }
-
         pickerList.forEach {
             if (circles.isNotEmpty() && (it.isSelected || isAlwaysSelected)) {
                 Engine.resize(circles.first { circle -> circle.pickerItem == it })
@@ -189,7 +193,9 @@ class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
     fun resize(x: Float, y: Float) = getItem(Vec2(x, glView.height - y))?.apply {
         if (Engine.resize(this)) {
             listener?.let {
-                if (circleBody.increased && !isAlwaysSelected) it.onBubbleDeselected(pickerItem) else it.onBubbleSelected(pickerItem)
+                val isDeselected = circleBody.increased && !isAlwaysSelected
+                pickerItem.isSelected = !isDeselected
+                if (isDeselected) it.onBubbleDeselected(pickerItem) else it.onBubbleSelected(pickerItem)
             }
         }
     }
@@ -198,5 +204,8 @@ class PickerRenderer(val glView: View) : GLSurfaceView.Renderer {
         circles.clear()
         Engine.clear()
     }
+
+
+    val TAG = "NIENTAG-BP"
 
 }

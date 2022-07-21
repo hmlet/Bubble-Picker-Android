@@ -1,8 +1,11 @@
 package com.kienht.bubblepicker.physics
 
 import org.jbox2d.collision.shapes.CircleShape
+import org.jbox2d.collision.shapes.Shape
 import org.jbox2d.common.Vec2
 import org.jbox2d.dynamics.*
+import kotlin.jvm.internal.Intrinsics
+import kotlin.math.abs
 
 /**
  * Created by irinagalata on 1/26/17.
@@ -69,39 +72,44 @@ class CircleBody(val world: World, var position: Vec2, var radius: Float, var in
     }
 
     fun resize(step: Float) {
-        if (isAlwaysSelected) {
-            if (!increased) {
-                increase(step)
+        if (this.isAlwaysSelected) {
+            if (!this.increased) {
+                increase(step);
             }
+        } else if (this.increased) {
+            decrease(step);
         } else {
-            if (increased) decrease(step) else increase(step)
+            increase(step);
         }
     }
 
     fun decrease(step: Float) {
-        isDecreasing = true
-        radius -= step
-        reset()
-
-        if (Math.abs(radius - decreasedRadius) < step) {
-            increased = false
-            clear()
+        this.isDecreasing = true;
+        this.radius -= step;
+        reset();
+        if (abs(this.radius - this.decreasedRadius) < step) {
+            this.increased = false;
+            clear();
         }
     }
 
     fun increase(step: Float) {
-        isIncreasing = true
-        radius += step
-        reset()
-
-        if (Math.abs(radius - increasedRadius) < step) {
-            increased = true
-            clear()
+        this.isIncreasing = true;
+        this.radius += step;
+        reset();
+        if (Math.abs(this.radius - this.increasedRadius) < step) {
+            this.increased = true;
+            clear();
         }
     }
 
     private fun reset() {
-        physicalBody.fixtureList?.shape?.m_radius = radius + margin
+        var mShape = shape
+        val body = physicalBody
+        val fixtureList = body.fixtureList
+        if (fixtureList != null && fixtureList.shape.also { mShape = it as CircleShape } != null) {
+            mShape.m_radius = radius + margin
+        }
     }
 
     fun defineState() {

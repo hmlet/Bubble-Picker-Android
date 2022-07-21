@@ -2,7 +2,7 @@ package com.kienht.bubblepicker.model
 
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.support.annotation.ColorInt
+import androidx.annotation.ColorInt
 
 /**
  * Created by irinagalata on 1/19/17.
@@ -15,6 +15,7 @@ data class PickerItem @JvmOverloads constructor(var title: String? = null,
                                                 var overlayAlpha: Float = 0.4f,
                                                 var typeface: Typeface = Typeface.DEFAULT,
                                                 @ColorInt var textColor: Int? = null,
+                                                @ColorInt var textColorSelected: Int? = null,
                                                 var textSize: Float = 40f,
                                                 var imgDrawable: Drawable? = null,
                                                 var imgUrl: String? = null,

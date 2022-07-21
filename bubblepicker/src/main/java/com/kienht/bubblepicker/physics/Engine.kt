@@ -5,13 +5,14 @@ import com.kienht.bubblepicker.sqr
 import org.jbox2d.common.Vec2
 import org.jbox2d.dynamics.World
 import java.util.*
+import kotlin.math.abs
 
 /**
  * Created by irinagalata on 1/26/17.
  */
 object Engine {
     var isAlwaysSelected = true
-
+    var isVerticalSwipeEnabled = true
     val selectedBodies: List<CircleBody>
         get() = bodies.filter { it.increased || it.toBeIncreased || it.isIncreasing }
     var maxSelectedCount: Int? = null
@@ -30,7 +31,7 @@ object Engine {
     private val step = 0.0005f
     private val bodies: ArrayList<CircleBody> = ArrayList()
     private var borders: ArrayList<Border> = ArrayList()
-    private val resizeStep = 0.005f
+    private val resizeStep = 0.01f
     private var scaleX = 0f
     private var scaleY = 0f
     private var touch = false
@@ -49,6 +50,7 @@ object Engine {
         for (i in 0 until bodiesCount) {
             val x = if (Random().nextBoolean()) -startX else startX
             val y = if (Random().nextBoolean()) -0.5f / scaleY else 0.5f / scaleY
+            //val bubbleRadius = interpolate(0.1f, 0.25f, (40..100).random() / 100f)
             bodies.add(CircleBody(world, Vec2(x, y), bubbleRadius * scaleX, (bubbleRadius * scaleX) * 1.3f, density,
                     isAlwaysSelected))
         }
@@ -61,7 +63,7 @@ object Engine {
 
     fun move() {
         toBeResized.forEach { it.circleBody.resize(resizeStep) }
-        world.step(if (centerImmediately) 0.035f else step, 11, 11)
+        world.step(if (centerImmediately) 0.09f else step, 11, 11)
         bodies.forEach { move(it) }
         toBeResized.removeAll(toBeResized.filter { it.circleBody.finished })
         stepsCount++
@@ -71,9 +73,16 @@ object Engine {
     }
 
     fun swipe(x: Float, y: Float) {
-        if (Math.abs(gravityCenter.x) < 2) gravityCenter.x += -x
-        if (Math.abs(gravityCenter.y) < 0.5f / scaleY) gravityCenter.y += y
-        increasedGravity = standardIncreasedGravity * Math.abs(x * 13) * Math.abs(y * 13)
+        if (abs(gravityCenter.x) < 2) gravityCenter.x += -x
+        if (isVerticalSwipeEnabled && abs(gravityCenter.y) < 0.5f / scaleY) gravityCenter.y += y
+
+        increasedGravity = if (isVerticalSwipeEnabled){
+            standardIncreasedGravity * abs (x * 13) * abs(13 * y)
+        }else {
+            standardIncreasedGravity * abs(x * 13)
+        }
+
+        //increasedGravity = standardIncreasedGravity * abs(x * 13) * Math.abs(y * 13)
         touch = true
     }
 
@@ -84,8 +93,8 @@ object Engine {
     }
 
     fun clear() {
-        borders.forEach { world.destroyBody(it.itemBody) }
-        bodies.forEach { world.destroyBody(it.physicalBody) }
+        borders.forEach { if(world.isLocked) world.destroyBody(it.itemBody)}
+        bodies.forEach { if (world.isLocked) world.destroyBody(it.physicalBody) }
         borders.clear()
         bodies.clear()
     }

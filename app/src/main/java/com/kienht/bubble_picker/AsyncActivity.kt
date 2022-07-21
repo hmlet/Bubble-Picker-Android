@@ -3,7 +3,7 @@ package com.kienht.bubble_picker
 import android.content.res.TypedArray
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
 import com.kienht.bubblepicker.BubblePickerListener
 import com.kienht.bubblepicker.adapter.BubblePickerAdapter
@@ -40,7 +40,7 @@ class AsyncActivity : AppCompatActivity(), BubblePickerListener {
                         title = titles[position]
                         gradient = BubbleGradient(colors.getColor((position * 2) % 8, 0),
                                 colors.getColor((position * 2) % 8 + 1, 0), BubbleGradient.VERTICAL)
-                        imgUrl = "http://sohanews.sohacdn.com/2018/4/11/hat9-1523392964439195574255.jpg"
+                        imgUrl = "https://quynhonme.vn/wp-content/uploads/2020/03/mui-yen-phu-yen.jpg"
                     }
                 }
             }

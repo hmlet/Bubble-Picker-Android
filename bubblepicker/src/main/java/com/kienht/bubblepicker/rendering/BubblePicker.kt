@@ -3,12 +3,12 @@ package com.kienht.bubblepicker.rendering
 import android.content.Context
 import android.graphics.PixelFormat
 import android.opengl.GLSurfaceView
-import android.support.annotation.ColorInt
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.View
+import androidx.annotation.ColorInt
 import com.kienht.bubblepicker.BubblePickerListener
 import com.kienht.bubblepicker.R
 import com.kienht.bubblepicker.adapter.BubblePickerAdapter
@@ -20,6 +20,13 @@ import com.kienht.bubblepicker.model.PickerItem
  */
 class BubblePicker(context: Context?, attrs: AttributeSet?) : GLSurfaceView(context, attrs) {
     private lateinit var renderer: PickerRenderer
+
+    var isVerticalSwipeEnabled: Boolean = false
+        set(value) {
+            field = value
+            renderer.isVerticalSwipeEnabled = value
+        }
+
 
     @ColorInt
     var background: Int = 0
@@ -48,11 +55,13 @@ class BubblePicker(context: Context?, attrs: AttributeSet?) : GLSurfaceView(cont
     var maxSelectedCount: Int? = null
         set(value) {
             renderer.maxSelectedCount = value
+            field = value
         }
 
     var listener: BubblePickerListener? = null
         set(value) {
             renderer.listener = value
+            field = value
         }
 
     var bubbleSize = 50
@@ -60,6 +69,7 @@ class BubblePicker(context: Context?, attrs: AttributeSet?) : GLSurfaceView(cont
             if (value in 1..100) {
                 renderer.bubbleSize = value
             }
+            field = value
         }
 
     val selectedItems: List<PickerItem?>

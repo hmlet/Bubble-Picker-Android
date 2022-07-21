@@ -2,9 +2,10 @@ package com.kienht.bubble_picker
 
 import android.content.res.TypedArray
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import com.kienht.bubblepicker.BubblePickerListener
 import com.kienht.bubblepicker.adapter.BubblePickerAdapter
 import com.kienht.bubblepicker.model.BubbleGradient
@@ -34,16 +35,23 @@ class SyncActivity : AppCompatActivity() {
             override fun getItem(position: Int): PickerItem {
                 return PickerItem().apply {
                     title = titles[position]
-                    gradient = BubbleGradient(colors.getColor((position * 2) % 8, 0),
-                            colors.getColor((position * 2) % 8 + 1, 0), BubbleGradient.VERTICAL)
-                    imgUrl = "http://sohanews.sohacdn.com/2018/4/11/hat9-1523392964439195574255.jpg"
-//                    imgDrawable = ContextCompat.getDrawable(this@SyncActivity, images.getResourceId(position, 0))
 
+                    //gradient = BubbleGradient(colors.getColor((position * 2) % 8, 0), colors.getColor((position * 2) % 8 + 1, 0), BubbleGradient.VERTICAL)
+                    //imgUrl = "https://quynhonme.vn/wp-content/uploads/2020/03/mui-yen-phu-yen.jpg"
+                    /*imgDrawable =  ResourcesCompat.getDrawable(
+                        resources, R.drawable.bg, null
+                    )*/
+                    color = ContextCompat.getColor(this@SyncActivity, R.color.purpleEnd)
+
+                    textColor = ContextCompat.getColor(this@SyncActivity, R.color.blueEnd)
+                    //textColorSelected = ContextCompat.getColor(this@SyncActivity, R.color.colorAccent)
                 }
             }
         }
 
-        picker.bubbleSize = 5
+        picker.bubbleSize = 1
+        picker.centerImmediately = true
+        picker.swipeMoveSpeed = 2f
         picker.listener = object : BubblePickerListener {
             override fun onBubbleDeselected(item: PickerItem) {
                 toast("Unselected: " + item.title!!)
@@ -67,8 +75,6 @@ class SyncActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        colors.resources
-        images.resources
     }
 
     private fun toast(text: String) = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
